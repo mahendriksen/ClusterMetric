@@ -73,7 +73,6 @@ def intersection(lst1, lst2): #finds intersections between list 1 and each eleme
 def dirty_calculate_f(t): #for when you want to calculate the rank and your tree is in Newick form, returns as integer
 	leaves = leaf_count(t)
 	tclusters = set(find_clusters(t))
-	print sorted(tclusters)
 	sumofclusters = 0
 	for i in tclusters:
 		sumofclusters += len(i)
@@ -231,7 +230,6 @@ def cohend(d1, d2): #finds Cohen's d for two lists of integers, returns as decim
 
 def leaf_set(t): #find leaf set of a tree as a list
 	leaves = []
-	print t
 	if len(t) == 1:
 		return [t[0]]
 	else:
