@@ -4,7 +4,7 @@ from treedefs import *
 import time
 from ast import literal_eval as make_tuple
 
-def calculation_time(treeone,treetwo,ping_count,running_total,diameter):
+def calculation_time(treeone,treetwo,ping_count,running_total,diameter): #finds distance between two trees as integer, rest of inputs are for statistical purposes.
 	one_f =	dirty_calculate_f(treeone)
 	two_f = dirty_calculate_f(treetwo)
 	# print "First tree is ", treeone, "with a rank of ",  one_f
@@ -73,16 +73,11 @@ if p == 1:
 		X = range(1,m+1)
 		one_f =	dirty_calculate_f(treeone)
 		two_f = dirty_calculate_f(treetwo)
-		print "First tree is ", treeone, "with a rank of ",  one_f
-		print "Second tree is ", treetwo, "with a rank of ",  two_f
-
 		a = multihierarchy(treeone,treetwo)
 		halfway_point = big_tree(a,ping_count) 
 		ping_count = halfway_point[1]
 		halfway_point = halfway_point[0]
 		halfway_f = clean_calculate_f(halfway_point)
-		print "Halfway point has rank of ", halfway_f
-		print "Distance between them is ", (one_f + two_f - 2*halfway_f)
 	else:
 		print "ERROR: Trees have different number of leaves"
 		sys.exit()
