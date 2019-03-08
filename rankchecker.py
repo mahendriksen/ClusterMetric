@@ -48,9 +48,7 @@ if p == 1:
 	m = len(first_list)
 	for i in xrange(m):
 		treeone = make_tuple(first_list[i])
-		print treeone
 		one_f =	dirty_calculate_f(treeone)
-		print one_f
 		running_total += one_f
 		distance_data[one_f] += 1
 		sys.stdout.write("\rCalculating iteration %i of %i . That's %f %%" % (i+1,m, (i+1)/m *100))
