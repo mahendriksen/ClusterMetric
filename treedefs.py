@@ -91,9 +91,12 @@ def leaf_count(t): #if you have a tree in Newick form, this counts the leaves, r
 
 def clean_calculate_f(t): #for when you want to calculate rank and your tree is a list of clusters, returns as integer
 	sumofclusters = 0
+	longest_cluster = 0
 	for cluster in t:
 		sumofclusters += len(cluster)
-	return sumofclusters - len(t)
+		if len(cluster) > longest_cluster:
+			longest_cluster = len(cluster)
+	return (sumofclusters - len(t) - (longest_cluster -1))
 
 def maximal_clusters(clusters): #finds maximal clusters in a set of clusters , returns as list of clusters. Warning: will usually find X, need to chop out X if that's not the answer you want
 	max = []
