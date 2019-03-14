@@ -20,5 +20,5 @@ Both programs have several options:
 
 For the .txt files
 1) You will need to write your trees in Newick form, with each tree on a new line, in one .txt file for rankchecker and two separate files for distancechecker.
-2) OTU's must be encoded as integers in tuple form, e.g. (1,). For instance, (dog, (cat, fish)) and ((dog, cat), fish) must be ((1,),((2,),(3,))) and (((1,),(2,)),(3,)) respectively.
+2) OTU's must be encoded either as integers or integers in tuple form, e.g. (1,). For instance, (dog, (cat, fish)) and ((dog, cat), fish) must be ((1,),((2,),(3,))) and (((1,),(2,)),(3,)) respectively or (1,(2,3)) and ((1,2),3)).
 3) The only input check done is to make sure each tree has the same number of leaves. Ensure that all trees are formatted correctly as the program will not warn you.
