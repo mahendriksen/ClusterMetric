@@ -233,7 +233,9 @@ def cohend(d1, d2): #finds Cohen's d for two lists of integers, returns as decim
 
 def leaf_set(t): #find leaf set of a tree as a list
 	leaves = []
-	if len(t) == 1:
+	if isinstance(t, (int, long)):
+		return (t,)
+	elif len(t) == 1:
 		return [t[0]]
 	else:
 		for subtree in t:
@@ -241,6 +243,8 @@ def leaf_set(t): #find leaf set of a tree as a list
 	return sorted(leaves)
 
 def find_clusters(t): #finds the clusters of a Newick form tree
+	if isinstance(t, (int, long)):
+		return [(t,)]
 	if len(t) == 1:
 		return [t]
 	else:
