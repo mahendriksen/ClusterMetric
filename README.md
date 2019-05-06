@@ -1,10 +1,10 @@
 # ClusterMetric
 
 Some notes:
-So far, this 'package' consists of two programs: distancechecker and rankchecker, and one module, treedefs. All must be downloaded to the same folder.
-distancechecker.py will find the distance between pairs of trees (if from a text file, all pairs consisting of one tree from file 1 and one tree from file 2)
-rankchecker.py will find the rank of single trees.
-Both generate a .txt file that records the number of each rank/distance in a list (so 0th entry is all rank/distance 1, 1st entry is rank/distance 2, etc.).
+So far, this 'package' consists of one programs, dist.py, and one module, treedefs. Both must be downloaded to the same folder.
+
+dist.py will find the distance between pairs of trees (if from a text file, all pairs consisting of one tree from file 1 and one tree from file 2), and a more-easily calculated upper bound for the distance, with data on the accuracy of the upper bound.
+dist.py will generate multiple .txt files that records the number of each upper bound/distance in a list (so 0th entry is all distance 1, 1st entry is distance 2, etc.). It will also generate a file that records how many upper bounds were accurate.
 
 Both programs have several options:
 1) Random (0) or Fixed (1)
