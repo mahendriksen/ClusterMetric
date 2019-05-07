@@ -26,7 +26,7 @@ def multicheck(s,t): #finds the multihierarchy obtained by using the intersectio
 		inter_multi[i]= tuple(inter_multi[i])
 	return inter_multi
 
-def binding(t,cluster1,cluster2):
+def binding(t,cluster1,cluster2): #binds two clusters together in a tree. Checking whether a binding is valid must be done prior to this.
 	t_copy = t[:]
 	new_cluster = tuple(sorted(cluster1+cluster2))
 	if len(cluster1) > 1:
@@ -36,7 +36,7 @@ def binding(t,cluster1,cluster2):
 	t_copy.append(new_cluster)
 	return sorted(t_copy, key=lambda x: (-len(x),x))
 
-def mod_max(clusters): #finds maximal clusters in a set of clusters , returns as list of clusters. Warning: will usually find X, need to chop out X if that's not the answer you want
+def mod_max(clusters): #finds maximal clusters in a set of clusters , returns as list of clusters. Will never return just one cluster unless tree is one leaf.
 	max = []
 	if len(clusters) == 1:
 		max = clusters
@@ -54,15 +54,15 @@ def mod_max(clusters): #finds maximal clusters in a set of clusters , returns as
 			max = mod_max(cluster_copy)
 	return max
 	
-def inter(list1,list2):
+def inter(list1,list2): #intersection of two lists
 	intersect = [a for a in list1 if a in list2]
 	return intersect
 
-def restriction(clusters,Y):
+def restriction(clusters,Y): #restricting clusters to a subset of their leaves
 	restr = list(set([tuple(inter(Y,i)) for i in clusters if inter(Y,i) is not None if len(inter(Y,i)) != 0]))
 	return restr
 	
-def binding_finder(clusters):
+def binding_finder(clusters): #finds potential clusters for binding
 	binding_tuples = []
 	if len(clusters) == 1:
 		return
@@ -78,14 +78,14 @@ def binding_finder(clusters):
 			binding_tuples += binding_finder(subtree) if binding_finder(subtree) is not None else []
 		return binding_tuples
 				
-def binding_maker(clusters):
+def binding_maker(clusters): #finds all trees that are potential bindings
 	binding_list = []
 	binding_tuples = binding_finder(clusters)
 	for i in binding_tuples:
 		binding_list += [binding(clusters,i[0],i[1])]
 	return binding_list
 
-def unbinding(t,cluster1,list1,list2):
+def unbinding(t,cluster1,list1,list2): #unbinds a cluster into two clusters. Must check if unbinding is valid before doing this
 	t_copy = t[:]
 	new_cluster1 = tuple(sorted([i for sub in list1 for i in sub]))
 	new_cluster2 = tuple(sorted([i for sub in list2 for i in sub]))
@@ -95,7 +95,7 @@ def unbinding(t,cluster1,list1,list2):
 	t_copy = list(set(t_copy))
 	return sorted(t_copy, key=lambda x: (-len(x),x))
 		
-def unbinding_finder(clusters):
+def unbinding_finder(clusters): #finds all potential unbindings
 	unbinding_tuples = []
 	if len(clusters) == 1:
 		return
@@ -122,68 +122,14 @@ def unbinding_finder(clusters):
 			unbinding_tuples += unbinding_finder(subtree) if unbinding_finder(subtree) is not None else []
 		return unbinding_tuples
 
-def unbinding_maker(clusters):
+def unbinding_maker(clusters): #finds all trees that can be made from unbindings
 	unbinding_list = []
 	unbinding_tuples = unbinding_finder(clusters)
 	for i in unbinding_tuples:
 		unbinding_list += [unbinding(clusters,i[0],i[1],i[2])]
 	return unbinding_list
 	
-def no_overshoot(current_trees,goal,neighbours,j,upper_bound):	
-	new_neighbours = []
-	for each_tree in current_trees:
-		if abs(clean_calculate_f(list(each_tree)) - goal) < upper_bound-(j-1):
-			new_neighbours += unbinding_maker(list(each_tree))
-			new_neighbours += binding_maker(list(each_tree))
-		elif abs(clean_calculate_f(list(each_tree)) - goal) == upper_bound-(j-1):
-			if (clean_calculate_f(list(each_tree)) - goal) < 0:
-				new_neighbours += binding_maker(list(each_tree))
-			if (clean_calculate_f(list(each_tree)) - goal) > 0:
-				new_neighbours += unbinding_maker(list(each_tree))
-	return new_neighbours
-	
-def true_distance(cluster1,f1,cluster2,f2,upper_bound):
-	shortest_distance = upper_bound
-	one_bound = (upper_bound // 2)
-	neighbours1 = {tuple(cluster1):0}
-	neighbours2 = {tuple(cluster2):0}
-	for j in xrange(1,one_bound+1):
-		if j >= shortest_distance:
-			print "Shortcut found!"
-			break
-		print "Part %d of %d" % (j,one_bound)
-		if j < one_bound:
-			current_trees = [z for z in neighbours1.keys() if neighbours1[z]==j-1]
-			new_neighbours = no_overshoot(current_trees,f2,neighbours1,j,upper_bound)
-			for tree in new_neighbours:
-				HPMcheck = sorted(multihierarchy(tree,cluster2), key=lambda x: (-len(x),x))
-				if (tree == HPMcheck or cluster2 == HPMcheck) and j + abs(f2 - clean_calculate_f(tree)) < shortest_distance:
-					shortest_distance = j + abs(f2 - clean_calculate_f(tree))
-				if not neighbours1.has_key(tuple(tree)):
-					neighbours1[tuple(tree)] = j
-		if j >= shortest_distance:
-			print "Shortcut found!"
-			break
-		if upper_bound % 2 == 1 or j < one_bound:
-			current_trees = [z for z in neighbours2.keys() if neighbours2[z]==j-1]
-			new_neighbours = no_overshoot(current_trees,f1,neighbours2,j,upper_bound)
-			for tree in new_neighbours:
-				HPMcheck = sorted(multihierarchy(tree,cluster1), key=lambda x: (-len(x),x))
-				if (tree == HPMcheck or cluster1 == HPMcheck) and j + abs(f1 - clean_calculate_f(tree)) < shortest_distance:
-					shortest_distance = j + abs(f1 - clean_calculate_f(tree))
-				if not neighbours2.has_key(tuple(tree)):
-					neighbours2[tuple(tree)] = j
-		if j >= shortest_distance:
-			print "Shortcut found!"
-			break
-		if 2*j >= f1 -f2: 
-			for tree_neighbour in neighbours1:
-				if neighbours2.has_key(tree_neighbour):
-					if neighbours1[tree_neighbour] + neighbours2[tree_neighbour] < shortest_distance:
-						shortest_distance = neighbours1[tree_neighbour] + neighbours2[tree_neighbour]
-	return shortest_distance
-
-def calculation_time(treeone,treetwo,ping_count,running_bound_total,bound_diameter): #finds distance between two trees as integer, rest of inputs are for statistical purposes.
+def calculation_time(treeone,treetwo,ping_count,running_bound_total,bound_diameter): #finds upper bound of distance between two trees as integer, rest of inputs are for statistical purposes.
 	one_f =	dirty_calculate_f(treeone)
 	two_f = dirty_calculate_f(treetwo)
 	print "First tree is ", treeone, "with a rank of ",  one_f
@@ -208,23 +154,7 @@ def calculation_time(treeone,treetwo,ping_count,running_bound_total,bound_diamet
 	# sys.stdout.flush()
 	return ping_count,running_bound_total,bound_diameter, x
 
-# def true_distance(treeone,treetwo,upper_bound):
-	# shortest_distance = upper_bound
-	# if upper_bound % 2 == 0:
-		# one_bound = (upper_bound // 2) - 1
-		# two_bound = (upper_bound // 2) - 1
-	# if upper_bound % 2 == 1:
-		# one_bound = (upper_bound // 2) - 1
-		# two_bound = upper_bound // 2
-	# one_neighbour = get_neighbourhood(find_clusters(treeone),one_bound)
-	# two_neighbour = get_neighbourhood(find_clusters(treetwo),two_bound)
-	# for tree_neighbour in one_neighbour:
-		# if two_neighbour.has_key(tree_neighbour):
-			# if one_neighbour[tree_neighbour] + two_neighbour[tree_neighbour] < shortest_distance:
-				# shortest_distance = one_neighbour[tree_neighbour] + two_neighbour[tree_neighbour]
-	# return shortest_distance
-	
-def path_gen(clusters1,clusters2,k):
+def path_gen(clusters1,clusters2,k): #finds list of potential sequences of ups and downs (in binary) to get from one tree to the other
 	path_list = []
 	rank_one = clean_calculate_f(clusters1)
 	rank_two = clean_calculate_f(clusters2)
@@ -236,7 +166,7 @@ def path_gen(clusters1,clusters2,k):
 					path_list.append('0'*(j-len(bin(i)[2:]))+bin(i)[2:])
 	return path_list
 
-def neigh_via_path(clusters1,paths):
+def neigh_via_path(clusters1,paths): #finds trees in a given path
 	tree_paths ={tuple(clusters1):''}
 	paths_so_far = []
 	for a in xrange(len(paths)):
@@ -259,7 +189,7 @@ def neigh_via_path(clusters1,paths):
 					tree_paths[tuple(new_friend)] = paths[a][:(b+1)]
 	return tree_paths
 
-def distance_via_paths(clusters1,clusters2,upper):
+def distance_via_paths(clusters1,clusters2,upper): #finds shortest distance among all possible paths
 	shortest_distance = upper
 	poss_paths = path_gen(clusters1,clusters2,upper)
 	first_path = []
