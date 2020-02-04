@@ -230,6 +230,7 @@ if p == 0:
 	biggest_difference = 0
 	times = []
 	
+	
 	if r == 0:
 		for i in xrange(m):
 			print "Testing Pair ", i+1
@@ -293,6 +294,11 @@ if p == 1:
 	n = input("How many leaves in each tree? ")
 
 	start_time = time.time()
+	ping_count = 0
+	upper_bound_data = [0]*(n**2-3*n+2)
+	distance_data = [0]*(n**2-3*n+2)
+	equality_counter = [0]*(n**2-3*n+2)
+	percentage_data = [0]*(n**2-3*n+2)
 	distance_data = [0]*(n**2-3*n+2)
 	diameter = 0
 	running_total = 0
@@ -302,7 +308,8 @@ if p == 1:
 	s = len(second_list)
 
 	m = f*s
-
+	
+	print "Upper_Bound_Data is", upper_bound_data
 	for  i in xrange(f):
 		for j in xrange(s):
 			iterator += 1
@@ -313,15 +320,15 @@ if p == 1:
 			ping_count,running_total,diameter, upper = calculation_time(treeone,treetwo,ping_count,running_total,diameter)
 			this_distance = distance_via_paths(clusters1,clusters2,upper)
 			print "\nThe upper bound was ", upper, "but the true distance is ", this_distance
-			# sys.stdout.write("\rCalculating iteration %i of %i . That's %f %%" % (iterator,m, iterator/m *100))
-			# sys.stdout.flush()
+			sys.stdout.write("\rCalculating iteration %i of %i . That's %f %%" % (iterator,m, iterator/m *100))
+			sys.stdout.flush()
 
 	x = time.time() - start_time		
 	print "\nTotal time is ", "--- ", x, " seconds ---" 
-	# print "Average time was ", x/m
-	# print "Average distance was ", running_total/m
-	# print "Diameter was ", diameter
-	# print "Degenerate percentage was %f %%" % (ping_count/m * 100)
+	print "Average time was ", x/m
+	print "Average distance was ", running_total/m
+	print "Diameter was ", diameter
+	print "Degenerate percentage was %f %%" % (ping_count/m * 100)
 	
 for i in xrange(len(upper_bound_data)):
 	if upper_bound_data[i] > 0:
