@@ -4,6 +4,12 @@ from ast import literal_eval as make_tuple
 import time
 import numpy
 
+def bigrange(stop):
+   i = 0
+   while i < stop:
+       yield i
+       i += 1
+
 def multicheck(s,t): #finds the multihierarchy obtained by using the intersection algorithm on your two trees, , returns as list of clusters
 	s_copy = s[:]
 	t_copy = t[:]
@@ -132,8 +138,8 @@ def unbinding_maker(clusters): #finds all trees that can be made from unbindings
 def calculation_time(treeone,treetwo,ping_count,running_bound_total,bound_diameter): #finds upper bound of distance between two trees as integer, rest of inputs are for statistical purposes.
 	one_f =	dirty_calculate_f(treeone)
 	two_f = dirty_calculate_f(treetwo)
-	print "First tree is ", treeone, "with a rank of ",  one_f
-	print "Second tree is ", treetwo, "with a rank of ",  two_f
+	# print "First tree is ", treeone, "with a rank of ",  one_f
+	# print "Second tree is ", treetwo, "with a rank of ",  two_f
 	a = multihierarchy(treeone,treetwo)
 	halfway_point = big_tree(a,ping_count) 
 	ping_count = halfway_point[1]
@@ -143,7 +149,7 @@ def calculation_time(treeone,treetwo,ping_count,running_bound_total,bound_diamet
 		halfway_f = clean_calculate_f(halfway_point)
 		# print "Halfway point has rank of ", halfway_f
 		x = (one_f + two_f - 2*halfway_f)
-		print "Upper bound is ", x
+		# print "Upper bound is ", x
 
 
 	running_bound_total += x
@@ -159,7 +165,8 @@ def path_gen(clusters1,clusters2,k): #finds list of potential sequences of ups a
 	rank_one = clean_calculate_f(clusters1)
 	rank_two = clean_calculate_f(clusters2)
 	for j in xrange(k,abs(rank_one - rank_two)+2,-2):
-		for i in xrange(2**j):
+		print j
+		for i in bigrange(2**j):
 			number_of_ones = sum([int(q) for q in list(bin(i)[2:])])
 			if 2*number_of_ones - j == rank_two - rank_one:
 				if (bin(i)[2:2+j-number_of_ones]) != '0'*(j-number_of_ones):
@@ -308,8 +315,7 @@ if p == 1:
 	s = len(second_list)
 
 	m = f*s
-	
-	print "Upper_Bound_Data is", upper_bound_data
+
 	for  i in xrange(f):
 		for j in xrange(s):
 			iterator += 1
@@ -318,22 +324,22 @@ if p == 1:
 			clusters1 = find_clusters(treeone)
 			clusters2 = find_clusters(treetwo)
 			ping_count,running_total,diameter, upper = calculation_time(treeone,treetwo,ping_count,running_total,diameter)
-			this_distance = distance_via_paths(clusters1,clusters2,upper)
-			print "\nThe upper bound was ", upper, "but the true distance is ", this_distance
+			this_distance = "UNCALCULATED" #distance_via_paths(clusters1,clusters2,upper)
+			#print "\nThe upper bound was ", upper, "but the true distance is ", this_distance
 			sys.stdout.write("\rCalculating iteration %i of %i . That's %f %%" % (iterator,m, iterator/m *100))
 			sys.stdout.flush()
 
 	x = time.time() - start_time		
 	print "\nTotal time is ", "--- ", x, " seconds ---" 
-	print "Average time was ", x/m
-	print "Average distance was ", running_total/m
-	print "Diameter was ", diameter
-	print "Degenerate percentage was %f %%" % (ping_count/m * 100)
+	# print "Average time was ", x/m
+	# print "Average distance was ", running_total/m
+	# print "Diameter was ", diameter
+	# print "Degenerate percentage was %f %%" % (ping_count/m * 100)
 	
 for i in xrange(len(upper_bound_data)):
 	if upper_bound_data[i] > 0:
 		percentage_data[i] = str(equality_counter[i]/upper_bound_data[i])
-		print int(equality_counter[i])/int(upper_bound_data[i])
+		# print int(equality_counter[i])/int(upper_bound_data[i])
 		
 
 
